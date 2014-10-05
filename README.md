@@ -7,7 +7,7 @@ What you can do with Jenkins-cli
 Available Commands
 ------------------
 
-add-job-to-view
+*add-job-to-view*
 
 	Adds jobs to view.
 	
