@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>SAMPLE PROJECT</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.promoted__builds.JobPropertyImpl plugin="promoted-builds@2.17">
+      <activeProcessNames>
+        <string>PROMOTE_TO_E2E</string>
+      </activeProcessNames>
+    </hudson.plugins.promoted__builds.JobPropertyImpl>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.21">
+      <autoRebuild>false</autoRebuild>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>echo &quot;Hello World&quot;</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
