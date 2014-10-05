@@ -4,7 +4,7 @@ jenkins-cli  - What you can do with Jenkins-cli
 
 Available Commands
 ------------------
-* **build**
+**build**
 
 	Builds a job, and optionally waits until its completion.
 	
