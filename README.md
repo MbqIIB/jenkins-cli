@@ -1,6 +1,4 @@
-jenkins-cli
-===========
-What you can do with Jenkins-cli
+jenkins-cli  - What you can do with Jenkins-cli
 ================================
 
 
