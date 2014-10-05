@@ -218,6 +218,6 @@ Available Commands
 
 	Wait for a node to become online.
 	
-**who-am-i	**
+**who-am-i**
 
      Reports your credential and permissions.
