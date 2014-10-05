@@ -25,5 +25,18 @@ connect-node
 
 	Reconnect to a node.
 	
+console
+
+	Retrieves console output of a build.
+
+copy-job
+
+	Copies a job.
+
+create-job
+
+	Creates a new job by reading stdin as a configuration XML file.
+
+	
 
 
