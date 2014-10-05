@@ -2,9 +2,10 @@ jenkins-cli
 ===========
 What you can do with Jenkins-cli
 ================================
-Create Jobs. View Jobs, Update Jobs.
+
 
 Available Commands
+------------------
 
 add-job-to-view
 
