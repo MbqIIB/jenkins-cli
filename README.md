@@ -4,6 +4,9 @@
 
 Available Commands
 ------------------
+
+h3.java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -i <user.key> command
+
 **build**
 
 	Builds a job, and optionally waits until its completion.
