@@ -12,6 +12,8 @@ cancel-quiet-down
 	Cancel the effect of the "quiet-down" command.
 	
 	
+	
+	a
 clear-queue
 	Clears the build queue.
 connect-node
