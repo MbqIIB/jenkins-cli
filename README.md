@@ -7,6 +7,8 @@ Available Commands
 
 `usage` java -jar jenkins-cli.jar -s http://localhost:8080/jenkins -i <user.key> command
 
+[More Information] (www.github.com)
+
 
 **build**
 
