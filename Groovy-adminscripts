@@ -1,0 +1,389 @@
+http://stackoverflow.com/questions/10777663/how-to-make-a-jenkins-hudson-job-surveil-some-others-jobs-and-decide-whether-to/10781891#10781891
+
+http://javadoc.jenkins-ci.org/
+https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+Script+Console
+
+###list of captwo services by name
+import hudson.model.*
+// For each project
+for(item in Hudson.instance.items) {
+  if(item.name ==~  /.*captwo-services-test.*/)
+  {
+    println(item.name)
+	//To delete
+	// println(item.delete()) 
+  }   
+}
+
+
+#####Code to get all job names
+def hi = hudson.model.Hudson.instance
+   hi.getItems(hudson.model.Project).each {project ->
+   println(project.displayName)
+}
+###
+for(item in Hudson.instance.items) {
+  println("JOB : "+item.name)
+  }
+
+  ##import hudson.model.*
+// For each project
+for(item in Hudson.instance.items) {
+     println(item.name)
+  }
+  
+####clean workspace
+import hudson.model.*
+// For each project
+for(item in Hudson.instance.items) {
+  // check that job is not building
+  if(!item.isBuilding()) {
+    println("Wiping out workspace of job "+item.name)
+    item.doDoWipeOutWorkspace()
+  }
+  else {
+    println("Skipping job "+item.name+", currently building")
+  }
+}
+##########################
+CLEAN ALL BUILDS
+def jobName = "BA_CMLM_FQM_PINT_TEST"
+def job = Jenkins.instance.getItem(jobName)
+job.getBuilds().each { it.delete() }
+
+  
+########Code to get statuses of all builds.
+def hi = hudson.model.Hudson.instance
+hi.getItems(hudson.model.Project).each {project ->
+  println(project.lastBuild.result)
+}
+
+######cleanup workspace on disabled jobs
+def hi = hudson.model.Hudson.instance
+             hi.getItems(hudson.model.Job).each {
+                job ->
+                if(job.isDisabled())
+                {
+                   println(job.displayName)
+                   job.doDoWipeOutWorkspace()
+                 }
+           }
+
+###
+import hudson.model.*
+// For each job
+for (item in Hudson.instance.items)
+{
+  jobName = item.getFullDisplayName()
+  // check that job is not building
+  if (!item.isBuilding())
+  {
+    // TODO: Modify the following condition to select which jobs to affect
+    if (jobName == "MyJob")
+    {
+      println("Wiping out workspaces of job " + jobName)
+      customWorkspace = item.getCustomWorkspace()
+      println("Custom workspace = " + customWorkspace)
+
+      for (node in Hudson.getInstance().getNodes())
+      {
+        println("  Node: " + node.getDisplayName())
+        workspacePath = node.getWorkspaceFor(item)
+        if (workspacePath == null)
+        {
+          println("    Could not get workspace path")
+        }
+        else
+        {
+          if (customWorkspace != null)
+          {
+            workspacePath = node.getRootPath().child(customWorkspace)
+          }
+
+          pathAsString = workspacePath.getRemote()
+          if (workspacePath.exists())
+          {
+            workspacePath.deleteRecursive()
+            println("    Deleted from location " + pathAsString)
+          }
+          else
+          {
+            println("    Nothing to delete at " + pathAsString)
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    println("Skipping job " + jobName + ", currently building")
+  }
+}
+
+###################################
+Tasks used by jobs:
+import hudson.model.*
+import hudson.tasks.*
+
+//All the projects on which we can apply the getBuilders method
+def allProjects = Hudson.instance.items.findAll{ it instanceof Project }
+
+//All the registered build steps in the current Jenkins Instance
+def allBuilders = Builder.all()
+
+//Group the projects by the build steps used
+def projectsGroupByBuildSteps = allBuilders.inject([:]){
+   map, builder ->   
+   map[builder.clazz.name] = allProjects.findAll{it.builders.any{ it.class.name.contains(builder.clazz.name)}}.collect{it.name}
+   map
+}
+
+//presentation
+projectsGroupByBuildSteps.each{
+   println """--- $it.key ---
+   \t$it.value\n"""
+}
+#######################################
+jobs built more than 24 hours:
+import hudson.model.*
+import hudson.node_monitors.*
+import hudson.slaves.*
+import java.util.concurrent.*
+jenkins = Hudson.instance
+// Define hour to compare (hour=24 will find builds that were built more than 1 day ago)
+hour=24;
+minute=60;
+second=60;
+oneDayInSecond=hour*minute*second;
+now=Calendar.instance;
+list=[];
+
+println("The build is run at ${now.time}");
+
+for (item in jenkins.items){
+   println("\t ${item.name}");
+   // Ignore project that contains freeze or patch case insensitive
+   if (item.name ==~ /(?i)(freeze|patch).*/){
+       println("\t Ignored as it is a freeze or patch build");
+    }else if (!item.disabled&&item.getLastBuild()!=null){
+       build_time=item.getLastBuild().getTimestamp();
+      if (now.time.time/1000-build_time.time.time/1000>oneDayInSecond){
+          println("\t\tLast build was built in more than ${hour} hours ago");
+          println("\t\tLast built was at ${build_time.time}");
+          list<< item;
+      }
+   }else if (item.disabled){
+        println("\t\tProject is disabled"); 
+   }
+} 
+
+if (list.size()>0){
+  println("Please take a look at following projects:");
+  for (item in list){
+     println("\t ${item.name}"); 
+  }
+  return 1;
+}
+#####################################################
+FAILED JOBS:
+// Get the list of failed jobs
+activeJobs = hudson.model.Hudson.instance.items.findAll{job -> job.isBuildable()}
+failedRuns = activeJobs.findAll{job -> job.lastBuild != null && job.lastBuild.result == hudson.model.Result.FAILURE}
+// Do something with them - e.g. listing them
+failedRuns.each{run -> println(run.name)}
+#########################################
+import hudson.model.*
+import hudson.maven.*
+
+hudson.model.Hudson.instance.items.findAll{job -> job.isBuildable() && job instanceof MavenModuleSet}.each{
+job ->
+  job.getDisabledModules(true).each{module -> module.delete()} 
+  println(job.name+" cleaned")
+}
+
+###
+import java.util.*
+import hudson.model.*
+import hudson.maven.*
+import hudson.maven.reporters.*
+import hudson.matrix.*
+import hudson.tasks.*
+
+hudson.model.Hudson.instance.items.findAll{job -> job.isBuildable() && job instanceof MavenModuleSet}.each{
+job -> 
+  println(job.name)
+  if(job.goals.indexOf("deploy")>0){
+    println("* Must update goals (deploy -> install) : "+job.goals)
+    def newGoals = job.goals.replaceAll("deploy","install");
+    println("* New goals : "+newGoals)
+    // Comment the 3 following lines for a first run to check goals modifications without modifying anything
+    job.goals=newGoals
+    job.archivingDisabled=false // It is necessary to archive artifacts to deploy them after the build
+    job.publishers.replace(new hudson.maven.RedeployPublisher(null,null,true,false));
+    println("* Redeploy publisher added");
+  }else{
+    println("* This maven job doesn't deploy its artifacts");
+  }
+}
+##############
+import hudson.model.*
+// For each project
+for(item in Hudson.instance.items) {
+  // check that job is not building
+  if(!item.isBuilding()) {
+    println("Wiping out workspace of job "+item.name)
+    item.doDoWipeOutWorkspace()
+  }
+  else {
+    println("Skipping job "+item.name+", currently building")
+  }
+}
+
+#####Wipe works space for specific jobs
+
+import hudson.model.*
+// For each job
+for (item in Hudson.instance.items)
+{
+  jobName = item.getFullDisplayName()
+  // check that job is not building
+  if (!item.isBuilding())
+  {
+    // TODO: Modify the following condition to select which jobs to affect
+    if (jobName == "MyJob")
+    {
+      println("Wiping out workspaces of job " + jobName)
+      customWorkspace = item.getCustomWorkspace()
+      println("Custom workspace = " + customWorkspace)
+
+      for (node in Hudson.getInstance().getNodes())
+      {
+        println("  Node: " + node.getDisplayName())
+        workspacePath = node.getWorkspaceFor(item)
+        if (workspacePath == null)
+        {
+          println("    Could not get workspace path")
+        }
+        else
+        {
+          if (customWorkspace != null)
+          {
+            workspacePath = node.getRootPath().child(customWorkspace)
+          }
+
+          pathAsString = workspacePath.getRemote()
+          if (workspacePath.exists())
+          {
+            workspacePath.deleteRecursive()
+            println("    Deleted from location " + pathAsString)
+          }
+          else
+          {
+            println("    Nothing to delete at " + pathAsString)
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    println("Skipping job " + jobName + ", currently building")
+  }
+}
+
+####clear queue
+import hudson.model.*
+def queue = Hudson.instance.queue
+println "Queue contains ${queue.items.length} items"
+queue.clear()
+println "Queue cleared"
+
+##
+//in this example we are disabling all the jobs that start with "BI_"
+import hudson.model.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+def pattern = ~/^BI_.+/
+   
+assert pattern instanceof Pattern
+for(item in Hudson.instance.items) {
+  if (pattern.matcher(item.name).matches()){
+      println(item.name)
+      item.disabled=true
+      item.save()
+  }
+}
+println("\nI am done\n")
+
+##############################################
+###ENABLE JOBS
+import hudson.model.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+def pattern = ~/DEV[_-][a-zA-Z]+[_-a-zA-Z]+/
+   
+assert pattern instanceof Pattern
+for(item in Hudson.instance.items) {
+  if (pattern.matcher(item.name).matches()){
+      println(item.name)
+      item.disabled=true
+	  //item.disabled=false
+      item.save()
+  }
+}
+
+#########clear old builds
+def jobs = Hudson.instance.items 
+
+ jobs.findAll{it.logRotator}.each {
+ 	println("JOB : "+ it.name)
+        println(it.logRotator.perform(it))
+
+    }
+####kill all builds
+import hudson.model.*;
+
+Hudson.instance.computers.each { c ->
+  c.executors.each { e ->
+     e.interrupt();
+  }
+}
+####################
+##job metrics
+import hudson.plugins.emailext.*
+import hudson.plugins.emailext.plugins.trigger.*
+import hudson.model.*
+import hudson.maven.*
+import hudson.maven.reporters.*
+import hudson.tasks.*
+
+println "testing"
+def totBuilds
+
+//println "Job Name \t\t\t\t Total Builds \t Failure \t Success"
+String header = sprintf('%-60s%15s%15s%15s',"Job Name","Total Builds","Failure","Success")
+println header
+for(item in Hudson.instance.items) 
+{
+    def successCount=0
+    def failureCount=0
+    def totBuildCount=0
+    totBuildCount =item.getBuilds().size()
+    //println totBuildCount
+    for (i = 1; i < totBuildCount; i++)
+    {
+      if(item.getBuildByNumber(i)){
+        if (item.getBuildByNumber(i).getBuildStatusUrl().contains("blue"))
+        {
+            successCount++
+        }
+        if (item.getBuildByNumber(i).getBuildStatusUrl().contains("red"))
+        {
+            failureCount++
+       }
+      }}
+//    println item.name + "\t\t\t\t" + totBuildCount + "\t" + failureCount + "\t" + successCount
+  String result = sprintf('%-60s%15d%15d%15d',item.name, totBuildCount, failureCount, successCount)
+    println result
+}
+###################################
