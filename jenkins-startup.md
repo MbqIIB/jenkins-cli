@@ -6,9 +6,11 @@ $ nohup java -jar jenkins.war > $LOGFILE 2>&1
 
 
 **httpPort=$HTTP_PORT**
+
 Runs Jenkins listener on port $HTTP_PORT using standard http protocol. The default is port 8080. To disable (because you're using https), use port -1.
 
---httpListenAddress=$HTTP_HOST--
+**httpListenAddress=$HTTP_HOST**
+
 Binds Jenkins to the IP address represented by $HTTP_HOST. The default is 0.0.0.0 — i.e. listening on all available interfaces. 
 For example, to only listen for requests from localhost, you could use: --httpListenAddress=127.0.0.1
 
