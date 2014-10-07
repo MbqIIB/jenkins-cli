@@ -1,0 +1,9 @@
+#sendmail
+
+def env = build.getEnvironment();
+String isRelease = env['IS_M2RELEASEBUILD'];
+logger.println "IS_M2RELEASEBUILD="+isRelease;
+if ( isRelease == null || isRelease.equals('false')) {
+  logger.println "cancel=true;";
+  cancel=true;
+}
