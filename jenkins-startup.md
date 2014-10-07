@@ -46,7 +46,7 @@ Sets that $ADMIN_USER is an administrative user and can configure Jenkins if Jen
 
 If using tomcat edit bin/catalina.sh
 
-export JENKINS_HOME=/apps/.jenkins
-export CATALINA_OPTS="-DM2_HOME=/apps/apache-maven-3.1.1"
-export JAVA_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512m -Xmx2048m"
+``export JENKINS_HOME=/apps/.jenkins``
+``export CATALINA_OPTS="-DM2_HOME=/apps/apache-maven-3.1.1"``
+``export JAVA_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512m -Xmx2048m"``
 
