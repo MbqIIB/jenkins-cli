@@ -5,9 +5,13 @@
 $ nohup java -jar jenkins.war > $LOGFILE 2>&1
 
 
---httpPort=$HTTP_PORT	Runs Jenkins listener on port $HTTP_PORT using standard http protocol. The default is port 8080. To disable (because you're using https), use port -1.
+--httpPort=$HTTP_PORT--
 
---httpListenAddress=$HTTP_HOST	Binds Jenkins to the IP address represented by $HTTP_HOST. The default is 0.0.0.0 — i.e. listening on all available interfaces. 
+Runs Jenkins listener on port $HTTP_PORT using standard http protocol. The default is port 8080. To disable (because you're using https), use port -1.
+
+--httpListenAddress=$HTTP_HOST--
+
+Binds Jenkins to the IP address represented by $HTTP_HOST. The default is 0.0.0.0 — i.e. listening on all available interfaces. 
 For example, to only listen for requests from localhost, you could use: --httpListenAddress=127.0.0.1
 
 --httpsPort=$HTTP_PORT	Uses HTTPS protocol on port $HTTP_PORT
@@ -31,3 +35,12 @@ For example, to make Jenkins accessible at http://myServer:8080/jenkins, set --p
 -logfile=$LOG_PATH/winstone_`date +"%Y%m-%d_%H-%M"`.log	Logging to desired file
 
 -XX:PermSize=512M -XX:MaxPermSize=2048M -Xmn128M -Xms1024M -Xmx2048M	referring to these options for Oracle Java 
+
+
+
+If using tomcat edit bin/catalina.sh
+
+export JENKINS_HOME=/apps/.jenkins
+export CATALINA_OPTS="-DM2_HOME=/apps/apache-maven-3.1.1"
+export JAVA_OPTS="-XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=512m -Xmx2048m"
+
