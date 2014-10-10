@@ -1,4 +1,4 @@
-`POM_DISPLAYNAME`	Jenkins main module	Taken from <name> in POM
+`POM_DISPLAYNAME`	Jenkins main module	Taken from `<name>` in POM
 
 `POM_VERSION`	1.536	Taken from <version> in POM
 
