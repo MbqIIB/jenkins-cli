@@ -7,10 +7,10 @@
 * Minimum Perforce Protection of 'open' for the Jenkins user. 
 If you wish to use the Review Build feature you will need Swarm.  Swarm 2014.2 or greater is required to support Jenkins authentication.
 
-tab-header1 | tab-header2
---------------------------
-col 1       | col 2
-col 1.1     | col 2.1
+| tab-header1 | tab-header2 |
+| --------------------------|
+| col 1       | col 2   |
+| col 1.1     | col 2.1 |
 
 
 | a  |   |   |
